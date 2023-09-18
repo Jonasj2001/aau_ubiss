@@ -1,0 +1,4 @@
+docker run -d \
+    -v /home/andreaswork/project/ubiss2023-iot/mqtt/files:/web \
+    -p 8080:8080 \
+    halverneus/static-file-server:latest

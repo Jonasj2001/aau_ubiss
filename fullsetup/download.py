@@ -18,10 +18,10 @@ def write_to_file(name, rawdata):
         f.write("\n")
 
 def download(userid):
-	server= util.server #"130.225.57.224"
-	#server="172.20.0.21"
-	port="9080"
-	#port="8080"
+	server= util.server # if hosted remotely on a different # if #"130.225.57.224"
+	server="172.20.0.21" # If hosted locally on a computer via docker
+	#port="9080"
+	port="8080"
 	res = requests.get("http://"+server+":"+port+"/"+userid+".csv")
 	print(res.text)
 	write_to_file(userid, res.text)

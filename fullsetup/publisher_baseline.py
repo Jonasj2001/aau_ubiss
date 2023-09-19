@@ -2,7 +2,7 @@ import time
 import paho.mqtt.client as mqtt
 import util
 import sensor_api as sapi
-
+# should "work", but the sensor api, sapi, will not work due to no sensors being available. 
 
 
 def get_sample(sensortype):

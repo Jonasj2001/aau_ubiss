@@ -19,10 +19,11 @@ def write_to_file(name, rawdata):
 
 def download(userid):
 	server=util.server
-	#server= "130.225.57.224"
-	#server="172.20.0.21"
-	#port="9080"
-	port="9080"
+	#server= "130.225.57.224" # if background is run on a separate host, then use the host ip of that pc
+	#port="9080" # Similarly this is the exposed port for the separate host
+
+	server="172.20.0.21" # IF run locally on the same host via docker
+	port="8080" # Similarly if run locally 
 	res = requests.get("http://"+server+":"+port+"/"+userid+".csv")
 	write_to_file(userid, res.text)
 

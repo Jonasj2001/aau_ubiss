@@ -15,15 +15,15 @@ services:
         ipv4_address: 172.20.0.19
 
 
-  # subscriber:
-  #   image: subscriber:latest
-  #   restart: always
-  #   volumes:
-  #     - /home/andreaswork/project/ubiss2023-iot/mqtt/files:/home/files 
-  #   networks:
-  #     ubiss:
-  #       ipv4_address: 172.20.0.24
-  #   command: /bin/bash -c  "cd /home && ls && sleep 5 && python subscriber.py"
+  subscriber:
+    image: subscriber:latest
+    restart: always
+    volumes:
+      - /home/andreaswork/project/ubiss2023-iot/mqtt/files:/home/files 
+    networks:
+      ubiss:
+        ipv4_address: 172.20.0.24
+    command: /bin/bash -c  "cd /home && ls && sleep 5 && python subscriber.py"
 
   mongo-express:
     image: mongo-express

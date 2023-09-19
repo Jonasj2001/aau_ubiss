@@ -1,8 +1,10 @@
+import random
+from datetime import datetime
 userid="group"
 
 sensors = ["temp", "light"]
 topic = "ubiss/"
-server="130.225.57.224"
+server="172.20.0.22"
 #server ="192.168.10.1"
 #fileserver="192.168.10.1"
 
@@ -10,6 +12,16 @@ server="130.225.57.224"
 #possible_topics = []
 # for s in sensors:
 #     possible_topics.append(s)
+
+def get_timestamp():
+    now=datetime.now()
+    sample_ts=now.strftime("%H:%M:%S")
+    return sample_ts
+
+def rand_sample():
+    timestamp = get_timestamp()
+    sample= int(random.random() * 100)
+    return sample, timestamp
 
 
 def on_connect(client, userdata, flags, rc):

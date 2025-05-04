@@ -1,6 +1,6 @@
 [project]
 name = "AAU_Ubiss"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
   { name="Jonas Jakobsen", email="jojako21@student.aau.dk" },
   { name="Andreas Casparsen", email="aca@es.aau.dk"},

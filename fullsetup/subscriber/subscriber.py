@@ -1,9 +1,9 @@
+import os
+from datetime import datetime
 import paho.mqtt.client as mqtt
 import pymongo
-import os
-import util
-from datetime import datetime
 
+MQTT_TOPIC="ubiss/"
 # root is username, example is password and ip is the docker container's ip
 connection = pymongo.MongoClient("mongodb://root:example@172.20.0.19")
 # ip of mqtt_mongo_1
@@ -59,7 +59,7 @@ def write_to_file(name, data):
     
 def database_export(userid, topic_type):
     print("exporting data for user", userid)
-    mydb = connection[str(util.topic[:-1])]
+    mydb = connection[str(MQTT_TOPIC[:-1])]
     collections = mydb.list_collection_names()
 
     if topic_type !="all":
@@ -166,7 +166,7 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe(util.topic+"#")
+    client.subscribe(MQTT_TOPIC+"#")
 # The callback for when a PUBLISH message is received from the server.
 
 
@@ -180,10 +180,10 @@ def on_message(client, userdata, msg):
     userid = payload[0]
     payload.pop(0)
 
-    if str(msg.topic)==util.topic+'download':
+    if str(msg.topic)==MQTT_TOPIC+'download':
         sensor_type=payload[0]
         database_export(userid,sensor_type)
-    elif msg.topic == util.topic+"multiple":
+    elif msg.topic == MQTT_TOPIC+"multiple":
         topics, payloads, sample_timestamps= find_generic_topics(payload)
         if len(payloads)==0:
             err="was any sensor data sent?"

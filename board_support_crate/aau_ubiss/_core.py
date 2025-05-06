@@ -3,7 +3,9 @@
 import time
 from enum import Enum
 from typing import Literal
+from datetime import datetime
 import requests
+from pytz import UTC
 import board
 from adafruit_bme680 import Adafruit_BME680_I2C as BME680
 from adafruit_veml7700 import VEML7700
@@ -21,10 +23,27 @@ class _bme_oversample(Enum):
     ovr_samp_8  = 8
     ovr_samp_16 = 16
 
+
+
+def _get_time():
+    """Get current time in UTC"""
+    frmt_str = "%H:%M:%S"
+    ts = datetime.now(tz=UTC)
+    return ts.strftime(frmt_str)
+
+def _time_decorater(func):
+    """Decorator to append timestamp to output"""
+    def _decorator(*args, **kwargs):
+        results = func(*args, **kwargs)
+        ts = _get_time()
+        return results, ts
+    return _decorator
+
 class _humidity:
     def __init__(self, sensor: BME680):
         self.sensor = sensor
 
+    @_time_decorater
     def __call__(self):
         """Return Humidity in [%]"""
         return self.sensor.humidity
@@ -39,6 +58,7 @@ class _temperature:
     def __init__(self, sensor: BME680):
         self.sensor = sensor
 
+    @_time_decorater
     def __call__(self):
         """Return temperature in [degC]"""
         return self.sensor.temperature
@@ -53,6 +73,7 @@ class _pressure:
     def __init__(self, sensor: BME680):
         self.sensor = sensor
 
+    @_time_decorater
     def __call__(self):
         """Return pressure in [hPa]"""
         return self.sensor.pressure
@@ -82,10 +103,12 @@ class _light:
     def __init__(self, sensor: VEML7700):
         self.sensor = sensor
 
+    @_time_decorater
     def __call__(self):
         """Return light level in [Lux], w. autocalibration """
         return self.sensor.autolux
 
+    @_time_decorater
     def get_light_raw(self):
         """Return light level in [Lux] witout autocalibration"""
         return self.sensor.lux
@@ -115,6 +138,7 @@ class _gas:
     def __init__(self, sensor: SGP30):
         self.sensor = sensor
 
+    @_time_decorater
     def __call__(self):
         """Return TVOC and eCO2 in [ppb] and [ppm]
         
@@ -252,6 +276,11 @@ class aau_ubiss:
         self.mqtt.client.publish(topic, msg) # Prepare download
         time.sleep(2)
         self._fetch_file(server, port)
+
+    @staticmethod
+    def get_time():
+        """Return current time in HH:MM:SS"""
+        return _get_time()
 
 
         

@@ -21,7 +21,7 @@ services:
     container_name: ubiss_subscriber
     build:
       context: ./subscriber
-      dockerfile: subscriber/Dockerfile
+      dockerfile: Dockerfile
     restart: always
     volumes:
       - ./containers/mqtt/files:/home/files 

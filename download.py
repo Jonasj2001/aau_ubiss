@@ -1,51 +1,29 @@
-import requests
-import paho.mqtt.client as mqtt
+#!/bin/env python
 import sys
-import util
-import os
-import time
+import argparse
+from aau_ubiss import aau_ubiss
 
-userid=util.userid
-data_to_download="all"
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(prog="AAU Ubiss Downloader")
+	parser.add_argument("--group", metavar="<id>", type=str,
+					 	help="Group id for which to download datafile" \
+						" (default: \"group\")",
+						default="group")
+	parser.add_argument("--server", metavar="<ip>", type=str,
+					 	help="Server IP (default: \"172.20.0.22\")",
+						default="172.20.0.22")
+	parser.add_argument("--localhost", metavar="", type=bool,
+					 	help="Use if running locally on RPI",
+						default=False)
 
-def write_to_file(name, rawdata):
-	
-    directory=os.getcwd()
-    f= open(directory + "/" + name+".csv", 'w')
-    data=rawdata.rsplit("\n")
-    for line in data:
-        f.write(line)
-        f.write("\n")
+	args = parser.parse_args()
 
-def download(userid):
-	server=util.server
-	#server= "130.225.57.224" # if background is run on a separate host, then use the host ip of that pc
-	#port="9080" # Similarly this is the exposed port for the separate host
+	if len(sys.argv) == 1:
+		parser.print_help()
+		exit()
 
-	server="172.20.0.21" # IF run locally on the same host via docker
-	port="8080" # Similarly if run locally 
-	res = requests.get("http://"+server+":"+port+"/"+userid+".csv")
-	write_to_file(userid, res.text)
-
-
-
-
-client = mqtt.Client()
-client.connect(util.server,1883,60)
-client.on_connect = util.on_connect
-client.on_message = util.on_message
-
-
-
-
-
-if len(sys.argv)>1:
-	output=str(sys.argv[1])+","+data_to_download
-	client.publish(util.topic+"download",output) # identifier
-	download(sys.argv[1])
-	
-else:
-	output=str(userid)+","+data_to_download
-	client.publish(util.topic+"download",output) # identifier
-	time.sleep(2)
-	download(userid)
+	ubiss = aau_ubiss(args.server, args.group)
+	if args.localhost:
+		ubiss.download(True)
+	else:
+		ubiss.download()

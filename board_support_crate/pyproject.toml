@@ -1,0 +1,23 @@
+[project]
+name = "AAU_Ubiss"
+version = "0.2.0"
+authors = [
+  { name="Jonas Jakobsen", email="jojako21@student.aau.dk" },
+  { name="Andreas Casparsen", email="aca@es.aau.dk"},
+]
+description = "Board support crate for a Raspberry PI w. MQTT and sensor configuration"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "adafruit-circuitpython-bme680",
+  "adafruit-circuitpython-veml7700",
+  "adafruit-circuitpython-sgp30",
+  "lgpio",
+  "paho-mqtt"
+]
+

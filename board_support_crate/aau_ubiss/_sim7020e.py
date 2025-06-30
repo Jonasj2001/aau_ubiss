@@ -42,8 +42,11 @@ class Sim7020x:
         self._ts_last_cmd = time.monotonic()
         self._cmd_delay = 0.1 # 100ms between commands
         self._mqtt_id = None
+        self._mqtt_buffer = 0
+        self.hex_mode(False)
         try:
-            self.get_mqtt_connection()
+            if self.get_mqtt_connection():
+                self.mqtt_discon()
         except IOError:
             pass
 
@@ -210,6 +213,10 @@ class Sim7020x:
         )
         return reply
 
+    def hex_mode(self, state: bool):
+        """Send message as HEX or raw"""
+        reply = self._send_at_command(f"AT+CREVHEX={int(state)}")
+        return reply
 
     # ----- MQTT -----
 
@@ -239,6 +246,7 @@ class Sim7020x:
 
         # Should return ID / Save ID
         self.get_mqtt_connection()
+        self._mqtt_buffer = buffer_size
         return reply
 
     def get_mqtt_connection(self) -> bool:
@@ -284,12 +292,41 @@ class Sim7020x:
             f"AT+CMQCON={self._mqtt_id},{ver},\"{client_id}\","\
             f"{keep_alive_interval},{c_val},0{suffix}"
         )
-        print(reply)
+        return reply
 
 
     def mqtt_discon(self):
         """Terminate MQTT Connection"""
         reply = self._send_at_command(
             f"AT+CMQDISCON={self._mqtt_id}"
+        )
+        return reply
+
+    def mqtt_publish(
+            self, 
+            topic: str,
+            message: str,
+            qos: int = 2):
+        """Publish a MQTT message to the server
+
+        Parameters
+        -----
+        topic : str
+            MQTT Topic to publish the message under
+        message : str
+            Message to publish
+        qos : int
+            MQTT QoS, 0: At most once\n
+            1: At least once\n 2: Exactly once
+        """
+        message = message.replace("\n", "").replace("\r","") # Remove CRLF
+        if len(message) > self._mqtt_buffer:
+            raise ValueError(f"Message is {len(message)} characters "\
+                             f"And most not exceed {self._mqtt_buffer}")
+        retained = 0
+        dup = 0
+        reply = self._send_at_command(
+            f"AT+CMQPUB={self._mqtt_id},\"{topic}\",{qos},{retained},"\
+            f"{dup},{len(message)},\"{message}\""
         )
         return reply

@@ -60,14 +60,15 @@ class Sim7020x:
         self._cmd_delay = delay
 
     @staticmethod
-    def _evaluate_reponse(response: str,
+    def _evaluate_reponse(response: AtMsg,
                           target_response: str):
         """Compare if the responses are correct by looking for the
         target_response as a substring in the reponse.
         """
-        if target_response in response:
+        if target_response in response.response:
             return True
-
+        else:
+            return False
 
 
     def _send_at_command(
@@ -303,7 +304,7 @@ class Sim7020x:
         return reply
 
     def mqtt_publish(
-            self, 
+            self,
             topic: str,
             message: str,
             qos: int = 2):

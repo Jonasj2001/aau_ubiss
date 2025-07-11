@@ -164,6 +164,7 @@ class MqttData:
                  timestamps: str | list[str] | None = None
                  ):
         self._ident = identifier
+        self._bufsize = 512
         if values is None:
             self.vals = []
         elif isinstance(values, list):
@@ -188,7 +189,7 @@ class MqttData:
     @property
     def identifier(self):
         return self._ident
-    
+
     def add_measurement(self,
                         val: object,
                         ts: None | str = None) -> int:
@@ -234,7 +235,28 @@ class MqttData:
             raise ValueError("Timestamp must be of type str formatted "\
                              "as \"HH:MM:SS\"")
         self.vals.append(val)
-        return 512 - len(self)
+        return self._bufsize - len(self)
+
+    def pop(self):
+        """Pop the latest measurement from the object
+        
+        Returns
+        -----
+        val: Any, ts: str, buffer_remainder: int 
+        """
+        val = None
+        ts = self.ts[-1]
+        if len(self.vals) > 0:
+            val = self.vals.pop()
+            # If empty clear timestamp
+            if len(self.vals) == 0:
+                ts = self.ts.pop()
+            elif len(self.ts) > 1:
+                ts = self.ts.pop()
+        else:
+            raise IndexError("pop from empty object")
+
+        return (val, ts, self._bufsize - len(self))
 
     def serialize(self):
         """Serialize object to a ASCII string."""
@@ -290,6 +312,10 @@ class messaging_ip(_messaging):
         self.client.on_message = self._on_message
         self.client.connect(self._ip, self._port, self._keepalive)
 
+    def discon(self):
+        """Disconnect from MQTT"""
+        self.client.disconnect()
+
     def publish(self, topic, payload):
         self.client.publish(topic, payload)
 
@@ -336,10 +362,6 @@ class messaging_nbiot(_messaging):
         self.sim.mqtt_publish(topic, output)
 
 
-
-
-
-
 class aau_iot:
     """AAU IoT, board support crate"""
     def __init__(self, server="172.20.0.22", userid="group"):
@@ -364,7 +386,7 @@ class aau_iot:
 
         with open(f"{self._uid}.csv", "w") as f:
             f.write(res.text)
-    
+
     _mqtt_mode = Literal["IP", "NBIoT"]
     def mqtt_connect(self,
                      mode: _mqtt_mode = "IP",
@@ -378,7 +400,7 @@ class aau_iot:
         else:
             raise ValueError(
                 f"Invalid mode: must be in: {aau_iot._mqtt_mode.__args__}")
-        
+
     def download(self, localhost: bool = False) -> None:
         """Fetch group data from the server"""
         server = self._ip
@@ -389,7 +411,7 @@ class aau_iot:
 
         if self.mqtt is None:
             raise IOError("MQTT Connection must be established first.")
-        
+
         topic = self.mqtt.topic+"download"
         msg = self._uid+",all"
         self.mqtt.publish(topic, msg) # Prepare download

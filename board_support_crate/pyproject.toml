@@ -1,6 +1,6 @@
 [project]
-name = "AAU_Ubiss"
-version = "0.2.0"
+name = "aau-iot-testbed"
+version = "0.4.3"
 authors = [
   { name="Jonas Jakobsen", email="jojako21@student.aau.dk" },
   { name="Andreas Casparsen", email="aca@es.aau.dk"},
@@ -18,6 +18,8 @@ dependencies = [
   "adafruit-circuitpython-veml7700",
   "adafruit-circuitpython-sgp30",
   "lgpio",
-  "paho-mqtt"
+  "paho-mqtt",
+  "pytz",
+  "pyserial"
 ]
 

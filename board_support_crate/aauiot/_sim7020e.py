@@ -10,7 +10,7 @@ class AtMsg:
             msg = msg.decode()
         self.echo = ""
         self.success = ""
-        self.response = ""
+        self.response = []
         self._split_msg(msg)
 
     def _split_msg(self, msg):
@@ -18,7 +18,9 @@ class AtMsg:
         if '\r\r\n' in msg:
             self.echo, msg = msg.split("\r\r\n")
         if "\r\n\r\n" in msg:
-            self.response, msg = msg.split("\r\n\r\n")
+            tmp = msg.split("\r\n\r\n")
+            self.response = tmp[:-1]
+            msg = tmp[-1]
         if "\r\n" in msg:
             success = msg.split("\r\n")[0]
             self.success = True if success == "OK" else False
@@ -30,7 +32,10 @@ class AtMsg:
         return msg
 
     def __repr__(self) -> str:
-        msg = f"{self.echo}; {self.response}; {self.success}"
+        response_sec = ""
+        for entry in self.response:
+            response_sec += entry + ";"
+        msg = f"{self.echo}; {response_sec} {self.success}"
         return msg
 
 class Sim7020x:
@@ -167,7 +172,7 @@ class Sim7020x:
     def connected_operator(self) -> bool:
         """Return True if the modem has connected to an operator"""
         status = self.get_cops()
-        status = status.response.split(",")
+        status = status.response[0].split(",")
         if len(status) < 2:
             return False
 
@@ -176,7 +181,7 @@ class Sim7020x:
     def connected_network(self) -> bool:
         """Return True if the modem has established an PDP connection"""
         status = self.get_pdp_context()
-        if status.response == '':
+        if status.response[0] == '':
             return False
 
         return True
@@ -253,7 +258,7 @@ class Sim7020x:
     def get_mqtt_connection(self) -> bool:
         """Check if a MQTT server connection is established"""
         reply = self._send_at_command("AT+CMQNEW?", 1)
-        connection = reply.response.split(",")
+        connection = reply.response[0].split(",")
         if connection[2] == "null":
             return False
         else:

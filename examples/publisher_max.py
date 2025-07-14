@@ -1,25 +1,26 @@
 import time
-from aau_ubiss import aau_ubiss
+from aauiot import aau_iot, MqttData
 
 # Insert server IP and your Group Name
-SERVER = "192.168.2.8"
-GROUP_ID = "ubiss"
+SERVER = "130.225.37.241" 
+GROUP_ID = "group"
 
 
 
 if __name__ == "__main__":
-    ubiss = aau_ubiss(SERVER, GROUP_ID)
+    iot = aau_iot(SERVER, GROUP_ID)
+    iot.mqtt_connect("NBIoT")
 
     ARR_SIZE = 6
     SENSOR = "light"
     ITERATIONS = 10
 
     data = [0] * ARR_SIZE
-    timestamps = [0] * ARR_SIZE
+    timestamps = [""] * ARR_SIZE
 
     for _ in range(ITERATIONS):
         for idx in range(ARR_SIZE):
-            sample, ts = ubiss.light()
+            sample, ts = iot.light()
             data[idx] = sample
             timestamps[idx] = ts
             time.sleep(1)
@@ -28,8 +29,11 @@ if __name__ == "__main__":
         index = data.index(max_sample)
         sample_ts = timestamps[index]
 
-        payload = ubiss.mqtt.prepare_payload([SENSOR], [[max_sample]], [[sample_ts]])
-        ubiss.mqtt.send_topics(payload)
+        msg = MqttData(SENSOR, [max_sample], sample_ts)
+
+        iot.mqtt.send_topics(msg)
         print("Max sample sent")
 
+    time.sleep(3)
+    iot.mqtt.discon()
     exit()

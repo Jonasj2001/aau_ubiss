@@ -1,5 +1,5 @@
 import time
-from aau_ubiss import aau_ubiss
+from aauiot import aau_iot, MqttData
 
 # Insert server IP and your Group Name
 SERVER = "130.225.37.241"
@@ -7,35 +7,28 @@ GROUP_ID = "group"
 
 
 if __name__ == "__main__":
-    ubiss = aau_ubiss(SERVER, GROUP_ID)
+    iot = aau_iot(SERVER, GROUP_ID)
+    iot.mqtt_connect("NBIoT")
 
     ARR_SIZE = 6
     ITERATIONS = 10
     SENSOR1 = "light"
     SENSOR2 = "temp"
 
-    data_light = [0] * ARR_SIZE
-    timestamp_light = [0] * ARR_SIZE
-
-    data_temp = [0] * ARR_SIZE
-    timestamp_temp = [0] * ARR_SIZE
-
     for _ in range(ITERATIONS):
+        data_light = MqttData(SENSOR1, timestamps=iot.get_time())
+        data_temp = MqttData(SENSOR2, timestamps=iot.get_time())
         for idx in range(ARR_SIZE):
-            sample, ts = ubiss.light()
-            data_light[idx] = sample
-            timestamp_light[idx] = ts
+            sample, ts = iot.light()
+            data_light.add_measurement(sample)
 
-            sample, ts = ubiss.temperature()
-            data_temp[idx] = sample
-            timestamp_temp[idx] = ts
+            sample, ts = iot.temperature()
+            data_temp.add_measurement(sample)
             time.sleep(1)
 
-        payload = ubiss.mqtt.prepare_payload(
-            [SENSOR1, SENSOR2],
-            [data_light, data_temp],
-            [[timestamp_light[0]], [timestamp_temp]])
-        
-        ubiss.mqtt.send_topics(payload)
+        iot.mqtt.send_topics(data_light)
+        iot.mqtt.send_topics(data_temp)
 
+    time.sleep(3)
+    iot.mqtt.discon()
     exit()

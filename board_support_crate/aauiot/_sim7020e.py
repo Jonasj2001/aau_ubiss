@@ -10,7 +10,7 @@ class AtMsg:
             msg = msg.decode()
         self.echo = ""
         self.success = ""
-        self.response = []
+        self.response = None
         self._split_msg(msg)
 
     def _split_msg(self, msg):
@@ -19,7 +19,8 @@ class AtMsg:
             self.echo, msg = msg.split("\r\r\n")
         if "\r\n\r\n" in msg:
             tmp = msg.split("\r\n\r\n")
-            self.response = tmp[:-1]
+            if len(tmp) > 1:
+                self.response = tmp[:-1]
             msg = tmp[-1]
         if "\r\n" in msg:
             success = msg.split("\r\n")[0]
@@ -33,8 +34,9 @@ class AtMsg:
 
     def __repr__(self) -> str:
         response_sec = ""
-        for entry in self.response:
-            response_sec += entry + ";"
+        if self.response is not None:
+            for entry in self.response:
+                response_sec += entry + ";"
         msg = f"{self.echo}; {response_sec} {self.success}"
         return msg
 
@@ -70,7 +72,9 @@ class Sim7020x:
         """Compare if the responses are correct by looking for the
         target_response as a substring in the reponse.
         """
-        if target_response in response.response:
+        if response.response is None:
+            return False
+        elif target_response in response.response:
             return True
         else:
             return False
@@ -172,8 +176,7 @@ class Sim7020x:
     def connected_operator(self) -> bool:
         """Return True if the modem has connected to an operator"""
         status = self.get_cops()
-        status = status.response[0].split(",")
-        if len(status) < 2:
+        if status.response is None:
             return False
 
         return True
@@ -181,7 +184,7 @@ class Sim7020x:
     def connected_network(self) -> bool:
         """Return True if the modem has established an PDP connection"""
         status = self.get_pdp_context()
-        if status.response[0] == '':
+        if status.response is None:
             return False
 
         return True

@@ -301,6 +301,7 @@ class Sim7020x:
             f"AT+CMQCON={self._mqtt_id},{ver},\"{client_id}\","\
             f"{keep_alive_interval},{c_val},0{suffix}"
         )
+        time.sleep(2) # Needed to consistently be able to Publish.
         return reply
 
 

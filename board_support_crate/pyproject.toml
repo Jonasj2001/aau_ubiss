@@ -1,6 +1,6 @@
 [project]
 name = "aau-iot-testbed"
-version = "0.4.4"
+version = "0.4.5"
 authors = [
   { name="Jonas Jakobsen", email="jojako21@student.aau.dk" },
   { name="Andreas Casparsen", email="aca@es.aau.dk"},

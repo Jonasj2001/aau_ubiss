@@ -283,8 +283,16 @@ class _messaging:
         self.topic = topic
         self._keepalive = keepalive
 
-    def send_topics(self, data: MqttData) -> None:
-        """Send Sensordata, to the MQTT server"""
+    def send_topics(self, data: MqttData, qos: int = 0) -> None:
+        """Send Sensordata, to the MQTT server
+        
+        Parameters
+        -----
+        data : aauiot.MqttData
+            Payload to publish to the MQTT Server
+        qos : int
+            0 At most one (default); 1 At least once; 2 Exactly once.
+        """
         raise NotImplementedError()
 
     def publish(self, topic, payload):
@@ -319,10 +327,10 @@ class messaging_ip(_messaging):
     def publish(self, topic, payload):
         self.client.publish(topic, payload)
 
-    def send_topics(self, data: MqttData) -> None:
+    def send_topics(self, data: MqttData, qos: int = 0) -> None:
         topic = self.topic + data.identifier
         output = self._uid + "," + data.serialize()
-        self.client.publish(topic, output)
+        self.client.publish(topic, output, qos)
 
 
 class messaging_nbiot(_messaging):
@@ -356,10 +364,10 @@ class messaging_nbiot(_messaging):
         """Publish MQTT message"""
         self.sim.mqtt_publish(topic, payload)
 
-    def send_topics(self, data: MqttData) -> None:
+    def send_topics(self, data: MqttData, qos: int = 0) -> None:
         topic = self.topic + data.identifier
         output = self._uid + "," + data.serialize()
-        self.sim.mqtt_publish(topic, output)
+        self.sim.mqtt_publish(topic, output, qos)
 
 
 class aau_iot:

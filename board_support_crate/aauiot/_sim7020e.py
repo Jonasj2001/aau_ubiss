@@ -135,7 +135,7 @@ class Sim7020x:
 
     def disable_rf(self):
         """Disable rf AT+CFUN=0"""
-        reply = self._send_at_command("AT+CFUN=0")
+        reply = self._send_at_command("AT+CFUN=0", 10)
         return reply
 
     def set_cops_auto(self):

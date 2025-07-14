@@ -30,10 +30,10 @@ To remove the docker instances and any generated data, make sure you are in the 
 Now you can run
 
 ```bash
-sudo ./docker_cleanup.sh
+sudo docker-compose down
 ```
 
-This stops and removes the generated docker containers, as well as any generated files.
+This stops and removes the generated docker containers.
 
 ## Utility scripts
 

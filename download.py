@@ -1,10 +1,10 @@
 #!/bin/env python
 import sys
 import argparse
-from aau_ubiss import aau_ubiss
+from aauiot import aau_iot
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser(prog="AAU Ubiss Downloader")
+	parser = argparse.ArgumentParser(prog="AAU IoT Downloader")
 	parser.add_argument("--group", metavar="<id>", type=str,
 					 	help="Group id for which to download datafile" \
 						" (default: \"group\")",
@@ -22,8 +22,8 @@ if __name__ == "__main__":
 		parser.print_help()
 		exit()
 
-	ubiss = aau_ubiss(args.server, args.group)
+	iot = aau_iot(args.server, args.group)
 	if args.localhost:
-		ubiss.download(True)
+		iot.download(True)
 	else:
-		ubiss.download()
+		iot.download()

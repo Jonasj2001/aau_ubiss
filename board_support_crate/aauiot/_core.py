@@ -274,7 +274,7 @@ class _messaging:
     def __init__(self,
                  server,
                  port:int = 1883,
-                 topic: str = "ubiss/",
+                 topic: str = "aauiot/",
                  userid: str = "group",
                  keepalive: int = 600):
         self._uid = userid
@@ -311,7 +311,7 @@ class messaging_ip(_messaging):
     def __init__(self,
                  server,
                  port: int = 1883,
-                 topic: str = "ubiss/",
+                 topic: str = "aauiot/",
                  userid: str = "group", 
                  keepalive: int = 600):
         super().__init__(server, port, topic, userid, keepalive)
@@ -337,7 +337,7 @@ class messaging_nbiot(_messaging):
     def __init__(self,
                  server,
                  port: int = 1883,
-                 topic: str = "ubiss/",
+                 topic: str = "aauiot/",
                  userid: str = "group",
                  keepalive: int = 600,
                  device = "/dev/ttyAMA0"):
@@ -399,7 +399,7 @@ class aau_iot:
     def mqtt_connect(self,
                      mode: _mqtt_mode = "IP",
                      port: int = 1883,
-                     topic: str = "ubiss/"):
+                     topic: str = "aauiot/"):
         """Setup MQTT Connection over IP or NB-IoT"""
         if mode == "IP":
             self.mqtt = messaging_ip(self._ip, port, topic, self._uid)
@@ -434,7 +434,7 @@ class aau_iot:
 
 #%%
 if __name__ == "__main__":
-    ubiss = aau_iot()
-    print(ubiss.temperature())
-    print(ubiss.pressure())
-    print(ubiss.humidity())
+    iot = aau_iot()
+    print(iot.temperature())
+    print(iot.pressure())
+    print(iot.humidity())

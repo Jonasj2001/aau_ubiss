@@ -3,7 +3,7 @@ from datetime import datetime
 import paho.mqtt.client as mqtt
 import pymongo
 
-MQTT_TOPIC="ubiss/"
+MQTT_TOPIC="aauiot/"
 # root is username, example is password and ip is the docker container's ip
 connection = pymongo.MongoClient("mongodb://root:example@172.20.0.19")
 # ip of mqtt_mongo_1
@@ -26,7 +26,7 @@ def database_generic():
     return
 
 def database_add_error(userid, errormsg):
-    db = connection["ubiss"]# - create db we should use "test"
+    db = connection["aauiot"]# - create db we should use "test"
     database = db["error"]# - document, we should use [test,light,etc.]
     db_data=[]
     index = {"user": userid, "sensor_value": "ERROR", "message":errormsg }
@@ -38,7 +38,7 @@ def database_add_error(userid, errormsg):
 
 
 def database_add(topic, payload, sample_timestamps, received_timestamps,userid):
-    db = connection["ubiss"]# - create db we should use "test"
+    db = connection["aauiot"]# - create db we should use "test"
     database = db[topic]# - document, we should use [test,light,etc.]
     db_data = []
     for i in range(len(payload)):

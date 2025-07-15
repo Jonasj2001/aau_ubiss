@@ -1,4 +1,4 @@
-# aau_ubiss
+# aau_iot
 
 In the full setup folder you can run "docker-compose up -d"
 This will create the full background functionalities of a server to receive data from users.

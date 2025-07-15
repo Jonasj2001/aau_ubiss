@@ -1,4 +1,4 @@
-# Setting up backend for AAU Ubiss
+# Setting up backend for AAU IoT Testbed
 
 Make sure you have docker installed  
 
@@ -37,5 +37,5 @@ This stops and removes the generated docker containers.
 
 ## Utility scripts
 
-- `mongo_delete_ubiss.py` is used to delete the database of the default user `ubiss`
+- `mongo_delete_database.py` is used to delete the database of the default user `aauiot`
 - `mongo_show_collections.py` is used to show all the user databases/collections created.

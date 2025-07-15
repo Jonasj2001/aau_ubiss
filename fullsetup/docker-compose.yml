@@ -3,7 +3,7 @@ version: '3.1'
 services:
 # the database we use
   mongo:
-    container_name: ubiss_mongo
+    container_name: aauiot_mongo
     image: mongo
     restart: always
     environment:
@@ -13,12 +13,12 @@ services:
      - ./containers/mongo/data:/data/db
      - ./containers/mongo/config:/data/configdb
     networks:
-      ubiss:
+      aauiot:
         ipv4_address: 172.20.0.19
 
 
   subscriber:
-    container_name: ubiss_subscriber
+    container_name: aauiot_subscriber
     build:
       context: ./subscriber
       dockerfile: Dockerfile
@@ -26,12 +26,12 @@ services:
     volumes:
       - ./containers/mqtt/files:/home/files 
     networks:
-      ubiss:
+      aauiot:
         ipv4_address: 172.20.0.24
     command: /bin/bash -c "cd /home && ls && sleep 5 && python3 subscriber.py"
 
   mongo-express:
-    container_name: ubiss_mongo_express
+    container_name: aauiot_mongo_express
     image: mongo-express
     restart: always
     ports:
@@ -41,24 +41,24 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
     networks:
-      ubiss:
+      aauiot:
         ipv4_address: 172.20.0.20
 
 # Generic filehosting for extracted data from the database
   file_hosting:
-    container_name: ubiss_fileserver
+    container_name: aauiot_fileserver
     image: halverneus/static-file-server:latest
     ports:
      - 9080:8080
     volumes:
       - ./containers/mqtt/files:/web 
     networks:
-      ubiss:
+      aauiot:
         ipv4_address: 172.20.0.21
 
 # MQTT broker
   mosquitto:
-    container_name: ubiss_mosquitto
+    container_name: aauiot_mosquitto
     image: eclipse-mosquitto
     volumes:
       - type: bind
@@ -76,13 +76,13 @@ services:
         protocol: tcp
         mode: host
     networks:
-      ubiss:
+      aauiot:
         ipv4_address: 172.20.0.22
 
 networks:
-    ubiss:
+    aauiot:
         driver: bridge
-        name: ubiss_network
+        name: aauiot_network
         ipam:
             config:
                 - subnet: 172.20.0.0/24

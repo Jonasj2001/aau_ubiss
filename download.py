@@ -15,6 +15,9 @@ if __name__ == "__main__":
 	parser.add_argument("--localhost", metavar="", type=bool,
 					 	help="Use if running locally on RPI",
 						default=False)
+	parser.add_argument("--nbiot", metavar="", type=bool,
+					    help="Use Nb-IoT for MQTT (Default False)",
+						default=False)
 
 	args = parser.parse_args()
 
@@ -23,6 +26,10 @@ if __name__ == "__main__":
 		exit()
 
 	iot = aau_iot(args.server, args.group)
+	if args.nbiot is False:
+		iot.mqtt_connect("IP")
+	else:
+		iot.mqtt_connect("NBIoT")
 	if args.localhost:
 		iot.download(True)
 	else:

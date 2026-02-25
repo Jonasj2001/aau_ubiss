@@ -14,10 +14,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-  "adafruit-circuitpython-bme680",
-  "adafruit-circuitpython-veml7700",
-  "adafruit-circuitpython-sgp30",
-  "lgpio",
+  "adafruit-circuitpython-bme680; platform_machine == 'aarch64'",
+  "adafruit-circuitpython-veml7700; platform_machine == 'aarch64'",
+  "adafruit-circuitpython-sgp30; platform_machine == 'aarch64'",
+  "lgpio; platform_machine == 'aarch64'",
   "paho-mqtt",
   "pytz",
   "pyserial"

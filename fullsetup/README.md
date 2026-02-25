@@ -13,6 +13,13 @@ Startup the containers by running
 sudo docker-compose up -d
 ```
 
+Make sure to add the following firewall rules:
+
+```bash
+1883/tcp # MQTT server
+9080/tcp # Fileserver to download data
+```
+
 ## Issues
 
 If the images do not autodownload you may have to run the following to download them  
